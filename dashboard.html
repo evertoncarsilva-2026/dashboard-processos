@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Dashboard Processos</title>
+https://cdn.jsdelivr.net/npm/chart.js>
+
+<style>
+body {
+    font-family: Arial;
+    margin: 20px;
+    background: #f4f6f9;
+}
+
+h1 {
+    text-align: center;
+}
+
+.container {
+    margin-bottom: 40px;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+}
+
+select {
+    padding: 8px;
+    margin-bottom: 15px;
+}
+
+.grid {
+    display: flex;
+    gap: 20px;
+}
+
+.card {
+    flex: 1;
+    padding: 15px;
+    background: #e9eff5;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 18px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>📊 Dashboard de Processos</h1>
+
+<!-- SEÇÃO 1 -->
+<div class="container">
+    <h2>1 - Processos em Andamento</h2>
+
+    <label>Selecionar Vara:</label>
+    <select id="vara1" onchange="atualizarSecao1()">
+        <option value="total">Todas</option>
+        <option value="1">1ª Vara</option>
+        <option value="2">2ª Vara</option>
+        <option value="3">3ª Vara</option>
+        <option value="4">4ª Vara</option>
+    </select>
+
+    <div class="grid">
+        <div class="card">Eproc<br><span id="eproc"></span></div>
+        <div class="card">SAJ<br><span id="saj"></span></div>
+        <div class="card">Migrados<br><span id="migrados"></span></div>
+    </div>
+</div>
+
+<!-- SEÇÃO 2 -->
+<div class="container">
+    <h2>2 - Distribuídos no Eproc</h2>
+
+    <label>Selecionar Vara:</label>
+    <select id="vara2" onchange="atualizarGrafico()">
+        <option value="total">Todas</option>
+        <option value="1">1ª Vara</option>
+        <option value="2">2ª Vara</option>
+        <option value="3">3ª Vara</option>
+        <option value="4">4ª Vara</option>
+    </select>
+
+    <canvas id="grafico"></canvas>
+</div>
+
+<script>
+
+// =====================
+// DADOS DA PLANILHA
+// =====================
+
+const andamento = {
+    total: {eproc: 5178, saj: 22502, migrados: 2203},
+    1: {eproc: 1229, saj: 5373, migrados: 542},
+    2: {eproc: 1209, saj: 6684, migrados: 432},
+    3: {eproc: 1288, saj: 4869, migrados: 716},
+    4: {eproc: 1453, saj: 5804, migrados: 513}
+};
+
+const distribuicao = {
+    total: [715, 652, 797, 1058, 968, 461],
+    1: [180,161,196,268,234,121],
+    2: [182,167,203,273,245,115],
+    3: [185,162,197,256,248,109],
+    4: [168,162,201,261,241,116]
+};
+
+const meses = ["Dez", "Jan", "Fev", "Mar", "Abr", "Mai"];
+
+// =====================
+// SEÇÃO 1
+// =====================
+function atualizarSecao1(){
+    let vara = document.getElementById("vara1").value;
+    let dados = andamento[vara];
+
+    document.getElementById("eproc").innerText = dados.eproc;
+    document.getElementById("saj").innerText = dados.saj;
+    document.getElementById("migrados").innerText = dados.migrados;
+}
+
+// =====================
+// GRÁFICO
+// =====================
+let chart;
+
+function atualizarGrafico(){
+    let vara = document.getElementById("vara2").value;
+    let dados = distribuicao[vara];
+
+    if(chart) chart.destroy();
+
+    chart = new Chart(document.getElementById("grafico"), {
+        type: 'bar',
+        data: {
+            labels: meses,
+            datasets: [{
+                label: "Distribuição mensal",
+                data: dados
+            }]
+        }
+    });
+}
+
+// =====================
+// INICIALIZAÇÃO
+// =====================
+atualizarSecao1();
+atualizarGrafico();
+
+</script>
+
+</body>
+</html>
